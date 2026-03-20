@@ -1,0 +1,181 @@
+[
+    {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "Blueprint",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "jsonify",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "SQLAlchemy",
+        "importPath": "flask_sqlalchemy",
+        "description": "flask_sqlalchemy",
+        "isExtraImport": true,
+        "detail": "flask_sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "Article",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "create_app",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_app():\n    app = Flask(__name__) #creeation de l'application\n    DB_URL = os.path.abspath(os.path.dirname(__file__)) #creation du chemin vers la bd\n    app.config[\"SQLALCHEMY_DATABASE_URI\"] = 'sqlite:///'+os.path.join(DB_URL,'blog.db')\n    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False\n    db.init_app(app)\n    from routes import articlees_bp\n    app.register_blueprint(articlees_bp)\n    return app\n#lancement de l'app",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "db = SQLAlchemy()\ndef create_app():\n    app = Flask(__name__) #creeation de l'application\n    DB_URL = os.path.abspath(os.path.dirname(__file__)) #creation du chemin vers la bd\n    app.config[\"SQLALCHEMY_DATABASE_URI\"] = 'sqlite:///'+os.path.join(DB_URL,'blog.db')\n    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False\n    db.init_app(app)\n    from routes import articlees_bp\n    app.register_blueprint(articlees_bp)\n    return app",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "Article",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class Article(db.Model):\n    __tablename__ = \"articles\"\n    id = db.Column(db.Integer, primary_key=True)\n    titre = db.Column(db.String(100), nullable=False)\n    contenu = db.Column(db.Text, nullable=False)\n    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)\n    auteur = db.Column(db.String(100), nullable=False)\n    def mise_dictonnaire(self):\n        return {\n            \"id\": self.id,",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "creer_articles",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def creer_articles():\n    data = request.get_json()\n    #validation des champs\n    if not data.get('titre') or not data.get('contenu') or not data.get('auteur'):\n        return jsonify({'message': 'le titre, le contenu et l\\'auteur sont obligatoire'}), 400\n    a = Article(\n        titre=data['titre'],\n        contenu=data['contenu'],\n        auteur=data['auteur'],\n        date=datetime.now()",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "recuperer_articles",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def recuperer_articles():\n    auteur = request.args.get('auteur')\n    date = request.args.get('date')\n    query = Article.query\n    if auteur:\n        query = query.filter_by(auteur=auteur)\n    if date:\n        query = query.filter_by(date=date)\n    articles = query.all()\n    return jsonify({'articles': [a.mise_dictonnaire() for a in articles]}), 200",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "recuperer_article",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def recuperer_article(id):\n    a = Article.query.get_or_404(id)\n    if not a:\n        return jsonify({'message': 'article non trouve'}), 404\n    return jsonify({'article': a.mise_dictonnaire()}), 200\n#route pour modifier un article\n@articlees_bp.route('/api/articles/<int:id>', methods=['PUT'])\ndef modifier_article(id):\n    a = Article.query.get(id)\n    if not a:",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "modifier_article",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def modifier_article(id):\n    a = Article.query.get(id)\n    if not a:\n        return jsonify({'message' : 'article non trouve'}), 404\n    data = request.get_json()\n    if not data.get('titre') or not data.get('contenu') or not data.get('auteur'):\n        return jsonify({'message': 'le titre, le contenu et l\\'auteur sont obligatoire'}), 400\n    a.titre = data['titre']\n    a.contenu = data['contenu']\n    a.auteur = data['auteur']",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "supprimer_article",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def supprimer_article(id):\n    a = Article.query.get_or_404(id)\n    if not a:\n        return jsonify({'message': 'article non trouve'}), 404\n    db.session.delete(a)\n    db.session.commit()\n    return jsonify({'message': 'article supprime avec success'}), 200\n#rechercher articles\n@articlees_bp.route('/api/articles/search', methods=['GET'])\ndef rechercher_articles():",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "rechercher_articles",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def rechercher_articles():\n    titre = request.args.get('titre')\n    if not titre:\n        return jsonify({'message': 'parametre de la requet obligatoire'}), 400\n    articles = Article.query.filter(Article.titre.contains(titre)).all()\n    return jsonify({'articles': [a.mise_dictonnaire() for a in articles]}), 200",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "articlees_bp",
+        "kind": 5,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "articlees_bp = Blueprint('articles', __name__)\n#route pour creer des artciles\n@articlees_bp.route('/api/articles', methods=['POST'])\ndef creer_articles():\n    data = request.get_json()\n    #validation des champs\n    if not data.get('titre') or not data.get('contenu') or not data.get('auteur'):\n        return jsonify({'message': 'le titre, le contenu et l\\'auteur sont obligatoire'}), 400\n    a = Article(\n        titre=data['titre'],",
+        "detail": "routes",
+        "documentation": {}
+    }
+]

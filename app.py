@@ -1,21 +1,27 @@
-from flask import Flask, render_template
-from flask_sqlachemy import SQLAlchemy
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 import os
 
-app = Flask(__name__) #creeation de l'application
+db = SQLAlchemy()
 
-DB_URL = os.path.abspath(os.path.dirname(__file__)) #creation du chemin vers la bd
+def create_app():
+    app = Flask(__name__) #creeation de l'application
 
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///'+os.path.join(DB_URL,'test')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    DB_URL = os.path.abspath(os.path.dirname(__file__)) #creation du chemin vers la bd
 
-db = SQLAlchemy(app)
+    app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///'+os.path.join(DB_URL,'blog.db')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-#creation des routes
-@app.route('/')#route de lancement du projet
-def index():
-    return render_template('create.html') #templates ou page html retourne
+    db.init_app(app)
 
-#lancement du projet
+    from routes import articlees_bp
+    app.register_blueprint(articlees_bp)
+
+    return app
+
+#lancement de l'app
 if __name__ == '__main__':
+    app = create_app()
+    with app.app_context():
+        db.create_all() 
     app.run(debug=True)
