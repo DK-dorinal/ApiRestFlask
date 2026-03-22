@@ -1,4 +1,4 @@
-from app import db
+from extensions import db
 from datetime import datetime
 
 class Article(db.Model):
@@ -14,6 +14,6 @@ class Article(db.Model):
             "id": self.id,
             "titre": self.titre,
             "contenu": self.contenu,
-            "date": self.date,
+            "date": self.date.isoformat() if self.date else None,
             "auteur": self.auteur
         }

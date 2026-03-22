@@ -1,8 +1,6 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 import os
-
-db = SQLAlchemy()
+from extensions import db
 
 def create_app():
     app = Flask(__name__) #creeation de l'application

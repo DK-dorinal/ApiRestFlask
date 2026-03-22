@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app import db
+from extensions import db
 from models import Article
 from datetime import datetime
 
@@ -21,7 +21,6 @@ def creer_articles():
         auteur=data['auteur'],
         date=datetime.now()
     )
-    
     db.session.add(a)
     db.session.commit()
     return jsonify({'message': 'article cree avec success','article':a.mise_dictonnaire()}), 201
