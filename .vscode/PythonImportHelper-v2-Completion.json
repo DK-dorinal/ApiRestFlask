@@ -8,6 +8,22 @@
         "documentation": {}
     },
     {
+        "label": "jsonify",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "redirect",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
         "label": "Blueprint",
         "importPath": "flask",
         "description": "flask",
@@ -32,36 +48,60 @@
         "documentation": {}
     },
     {
+        "label": "Swagger",
+        "importPath": "flasgger",
+        "description": "flasgger",
+        "isExtraImport": true,
+        "detail": "flasgger",
+        "documentation": {}
+    },
+    {
+        "label": "active_config",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "extensions",
+        "description": "extensions",
+        "isExtraImport": true,
+        "detail": "extensions",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "extensions",
+        "description": "extensions",
+        "isExtraImport": true,
+        "detail": "extensions",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "extensions",
+        "description": "extensions",
+        "isExtraImport": true,
+        "detail": "extensions",
+        "documentation": {}
+    },
+    {
+        "label": "articlees_bp",
+        "importPath": "routes",
+        "description": "routes",
+        "isExtraImport": true,
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
         "label": "os",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "os",
         "description": "os",
         "detail": "os",
-        "documentation": {}
-    },
-    {
-        "label": "db",
-        "importPath": "extensions",
-        "description": "extensions",
-        "isExtraImport": true,
-        "detail": "extensions",
-        "documentation": {}
-    },
-    {
-        "label": "db",
-        "importPath": "extensions",
-        "description": "extensions",
-        "isExtraImport": true,
-        "detail": "extensions",
-        "documentation": {}
-    },
-    {
-        "label": "db",
-        "importPath": "extensions",
-        "description": "extensions",
-        "isExtraImport": true,
-        "detail": "extensions",
         "documentation": {}
     },
     {
@@ -101,8 +141,71 @@
         "kind": 2,
         "importPath": "app",
         "description": "app",
-        "peekOfCode": "def create_app():\n    app = Flask(__name__) #creeation de l'application\n    DB_URL = os.path.abspath(os.path.dirname(__file__)) #creation du chemin vers la bd\n    app.config[\"SQLALCHEMY_DATABASE_URI\"] = 'sqlite:///'+os.path.join(DB_URL,'blog.db')\n    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False\n    db.init_app(app)\n    from routes import articlees_bp\n    app.register_blueprint(articlees_bp)\n    return app\n#lancement de l'app",
+        "peekOfCode": "def create_app(config=None):\n    app = Flask(__name__)\n    app.config.from_object(config or active_config)\n    db.init_app(app)\n    with app.app_context():\n        db.create_all()\n    app.register_blueprint(articlees_bp)\n    Swagger(app)\n    @app.route(\"/\")\n    def index():",
         "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "Config",
+        "kind": 6,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "class Config:\n    SECRET_KEY = os.environ.get(\"SECRET_KEY\", \"dev-secret-key-change-in-prod\")\n    DEBUG   = False\n    TESTING = False\n    SQLALCHEMY_TRACK_MODIFICATIONS = False\n    SWAGGER = {\n        \"title\":       \"ApiRestFlask – Blog API\",\n        \"version\":     \"1.0.0\",\n        \"description\": \"API REST pour gérer des articles de blog – DK-dorinal\",\n        \"uiversion\":   3,",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "DevelopmentConfig",
+        "kind": 6,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "class DevelopmentConfig(Config):\n    DEBUG = True\n    SQLALCHEMY_DATABASE_URI = os.environ.get(\n        \"DATABASE_URL\",\n        f\"sqlite:///{os.path.join(BASE_DIR, 'blog.db')}\",\n    )\nclass TestingConfig(Config):\n    TESTING = True\n    SQLALCHEMY_DATABASE_URI = \"sqlite:///:memory:\"\nclass ProductionConfig(Config):",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "TestingConfig",
+        "kind": 6,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "class TestingConfig(Config):\n    TESTING = True\n    SQLALCHEMY_DATABASE_URI = \"sqlite:///:memory:\"\nclass ProductionConfig(Config):\n    SQLALCHEMY_DATABASE_URI = os.environ.get(\"DATABASE_URL\", \"sqlite:///blog.db\")\nconfig_map = {\n    \"development\": DevelopmentConfig,\n    \"testing\":     TestingConfig,\n    \"production\":  ProductionConfig,\n}",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "ProductionConfig",
+        "kind": 6,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "class ProductionConfig(Config):\n    SQLALCHEMY_DATABASE_URI = os.environ.get(\"DATABASE_URL\", \"sqlite:///blog.db\")\nconfig_map = {\n    \"development\": DevelopmentConfig,\n    \"testing\":     TestingConfig,\n    \"production\":  ProductionConfig,\n}\nactive_config = config_map.get(os.environ.get(\"APP_ENV\", \"development\"), DevelopmentConfig)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "BASE_DIR",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "BASE_DIR = os.path.abspath(os.path.dirname(__file__))\nclass Config:\n    SECRET_KEY = os.environ.get(\"SECRET_KEY\", \"dev-secret-key-change-in-prod\")\n    DEBUG   = False\n    TESTING = False\n    SQLALCHEMY_TRACK_MODIFICATIONS = False\n    SWAGGER = {\n        \"title\":       \"ApiRestFlask – Blog API\",\n        \"version\":     \"1.0.0\",\n        \"description\": \"API REST pour gérer des articles de blog – DK-dorinal\",",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "config_map",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "config_map = {\n    \"development\": DevelopmentConfig,\n    \"testing\":     TestingConfig,\n    \"production\":  ProductionConfig,\n}\nactive_config = config_map.get(os.environ.get(\"APP_ENV\", \"development\"), DevelopmentConfig)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "active_config",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "active_config = config_map.get(os.environ.get(\"APP_ENV\", \"development\"), DevelopmentConfig)",
+        "detail": "config",
         "documentation": {}
     },
     {
@@ -119,52 +222,34 @@
         "kind": 6,
         "importPath": "models",
         "description": "models",
-        "peekOfCode": "class Article(db.Model):\n    __tablename__ = \"articles\"\n    id = db.Column(db.Integer, primary_key=True)\n    titre = db.Column(db.String(100), nullable=False)\n    contenu = db.Column(db.Text, nullable=False)\n    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)\n    auteur = db.Column(db.String(100), nullable=False)\n    def mise_dictonnaire(self):\n        return {\n            \"id\": self.id,",
+        "peekOfCode": "class Article(db.Model):\n    __tablename__ = \"articles\"\n    id      = db.Column(db.Integer,      primary_key=True)\n    titre   = db.Column(db.String(100),  nullable=False)\n    contenu = db.Column(db.Text,         nullable=False)\n    date    = db.Column(db.DateTime,     nullable=False, default=datetime.utcnow)\n    auteur  = db.Column(db.String(100),  nullable=False)\n    def mise_dictonnaire(self):\n        return {\n            \"id\":      self.id,",
         "detail": "models",
         "documentation": {}
     },
     {
-        "label": "creer_articles",
+        "label": "ok",
         "kind": 2,
         "importPath": "routes",
         "description": "routes",
-        "peekOfCode": "def creer_articles():\n    data = request.get_json()\n    #validation des champs\n    if not data.get('titre') or not data.get('contenu') or not data.get('auteur'):\n        return jsonify({'message': 'le titre, le contenu et l\\'auteur sont obligatoire'}), 400\n    a = Article(\n        titre=data['titre'],\n        contenu=data['contenu'],\n        auteur=data['auteur'],\n        date=datetime.now()",
+        "peekOfCode": "def ok(data=None, message=\"Succès\", status=200, **extra):\n    body = {\"success\": True, \"message\": message}\n    if data is not None:\n        body[\"data\"] = data\n    body.update(extra)\n    return jsonify(body), status\ndef err(message=\"Erreur\", status=400, errors=None):\n    body = {\"success\": False, \"message\": message}\n    if errors:\n        body[\"errors\"] = errors",
         "detail": "routes",
         "documentation": {}
     },
     {
-        "label": "recuperer_articles",
+        "label": "err",
         "kind": 2,
         "importPath": "routes",
         "description": "routes",
-        "peekOfCode": "def recuperer_articles():\n    auteur = request.args.get('auteur')\n    date = request.args.get('date')\n    query = Article.query\n    if auteur:\n        query = query.filter_by(auteur=auteur)\n    if date:\n        query = query.filter_by(date=date)\n    articles = query.all()\n    return jsonify({'articles': [a.mise_dictonnaire() for a in articles]}), 200",
+        "peekOfCode": "def err(message=\"Erreur\", status=400, errors=None):\n    body = {\"success\": False, \"message\": message}\n    if errors:\n        body[\"errors\"] = errors\n    return jsonify(body), status\ndef valider_champs(data, partial=False):\n    problems = []\n    required = [\"titre\", \"contenu\", \"auteur\"]\n    for field in required:\n        if not partial and field not in data:",
         "detail": "routes",
         "documentation": {}
     },
     {
-        "label": "recuperer_article",
+        "label": "valider_champs",
         "kind": 2,
         "importPath": "routes",
         "description": "routes",
-        "peekOfCode": "def recuperer_article(id):\n    a = Article.query.get_or_404(id)\n    if not a:\n        return jsonify({'message': 'article non trouve'}), 404\n    return jsonify({'article': a.mise_dictonnaire()}), 200\n#route pour modifier un article\n@articlees_bp.route('/api/articles/<int:id>', methods=['PUT'])\ndef modifier_article(id):\n    a = Article.query.get(id)\n    if not a:",
-        "detail": "routes",
-        "documentation": {}
-    },
-    {
-        "label": "modifier_article",
-        "kind": 2,
-        "importPath": "routes",
-        "description": "routes",
-        "peekOfCode": "def modifier_article(id):\n    a = Article.query.get(id)\n    if not a:\n        return jsonify({'message' : 'article non trouve'}), 404\n    data = request.get_json()\n    if not data.get('titre') or not data.get('contenu') or not data.get('auteur'):\n        return jsonify({'message': 'le titre, le contenu et l\\'auteur sont obligatoire'}), 400\n    a.titre = data['titre']\n    a.contenu = data['contenu']\n    a.auteur = data['auteur']",
-        "detail": "routes",
-        "documentation": {}
-    },
-    {
-        "label": "supprimer_article",
-        "kind": 2,
-        "importPath": "routes",
-        "description": "routes",
-        "peekOfCode": "def supprimer_article(id):\n    a = Article.query.get_or_404(id)\n    if not a:\n        return jsonify({'message': 'article non trouve'}), 404\n    db.session.delete(a)\n    db.session.commit()\n    return jsonify({'message': 'article supprime avec success'}), 200\n#rechercher articles\n@articlees_bp.route('/api/articles/search', methods=['GET'])\ndef rechercher_articles():",
+        "peekOfCode": "def valider_champs(data, partial=False):\n    problems = []\n    required = [\"titre\", \"contenu\", \"auteur\"]\n    for field in required:\n        if not partial and field not in data:\n            problems.append(f\"'{field}' est obligatoire.\")\n        elif field in data and not str(data[field]).strip():\n            problems.append(f\"'{field}' ne peut pas etre vide.\")\n    return problems\n@articlees_bp.route('/api/articles/search', methods=['GET'])",
         "detail": "routes",
         "documentation": {}
     },
@@ -173,7 +258,52 @@
         "kind": 2,
         "importPath": "routes",
         "description": "routes",
-        "peekOfCode": "def rechercher_articles():\n    titre = request.args.get('titre')\n    if not titre:\n        return jsonify({'message': 'parametre de la requet obligatoire'}), 400\n    articles = Article.query.filter(Article.titre.contains(titre)).all()\n    return jsonify({'articles': [a.mise_dictonnaire() for a in articles]}), 200",
+        "peekOfCode": "def rechercher_articles():\n    \"\"\"\n    Rechercher des articles par titre.\n    ---\n    tags:\n      - Articles\n    parameters:\n      - name: titre\n        in: query\n        type: string",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "creer_articles",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def creer_articles():\n    \"\"\"\n    Creer un nouvel article.\n    ---\n    tags:\n      - Articles\n    parameters:\n      - in: body\n        name: body\n        required: true",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "recuperer_articles",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def recuperer_articles():\n    \"\"\"\n    Recuperer tous les articles (filtrables).\n    ---\n    tags:\n      - Articles\n    parameters:\n      - name: auteur\n        in: query\n        type: string",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "recuperer_article",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def recuperer_article(id):\n    \"\"\"\n    Recuperer un article par son ID.\n    ---\n    tags:\n      - Articles\n    parameters:\n      - name: id\n        in: path\n        type: integer",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "modifier_article",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def modifier_article(id):\n    \"\"\"\n    Modifier un article (remplacement complet).\n    ---\n    tags:\n      - Articles\n    parameters:\n      - name: id\n        in: path\n        type: integer",
+        "detail": "routes",
+        "documentation": {}
+    },
+    {
+        "label": "supprimer_article",
+        "kind": 2,
+        "importPath": "routes",
+        "description": "routes",
+        "peekOfCode": "def supprimer_article(id):\n    \"\"\"\n    Supprimer un article.\n    ---\n    tags:\n      - Articles\n    parameters:\n      - name: id\n        in: path\n        type: integer",
         "detail": "routes",
         "documentation": {}
     },
@@ -182,7 +312,7 @@
         "kind": 5,
         "importPath": "routes",
         "description": "routes",
-        "peekOfCode": "articlees_bp = Blueprint('articles', __name__)\n#route pour creer des artciles\n@articlees_bp.route('/api/articles', methods=['POST'])\ndef creer_articles():\n    data = request.get_json()\n    #validation des champs\n    if not data.get('titre') or not data.get('contenu') or not data.get('auteur'):\n        return jsonify({'message': 'le titre, le contenu et l\\'auteur sont obligatoire'}), 400\n    a = Article(\n        titre=data['titre'],",
+        "peekOfCode": "articlees_bp = Blueprint('articles', __name__)\ndef ok(data=None, message=\"Succès\", status=200, **extra):\n    body = {\"success\": True, \"message\": message}\n    if data is not None:\n        body[\"data\"] = data\n    body.update(extra)\n    return jsonify(body), status\ndef err(message=\"Erreur\", status=400, errors=None):\n    body = {\"success\": False, \"message\": message}\n    if errors:",
         "detail": "routes",
         "documentation": {}
     }
